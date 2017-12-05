@@ -4,11 +4,14 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nidhind/huntGame/db"
 )
 
 var startUpTime time.Time = time.Now()
 
 func main() {
+	// Initialize database
+	db.InitMongo()
 
 	api := gin.New()
 
