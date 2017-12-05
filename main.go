@@ -10,6 +10,7 @@ import (
 var startUpTime time.Time = time.Now()
 
 func main() {
+
 	// Initialize database
 	db.InitMongo()
 

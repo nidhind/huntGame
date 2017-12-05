@@ -6,7 +6,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-const DB = "mmdb_dev"
+const DB = "huntGame_v1"
 
 var Session *mgo.Session
 

@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "4pqVzk2qBe3ms8VSlDHA+81LlSE=",
+			"path": "github.com/asaskevich/govalidator",
+			"revision": "852d82c746b23d9b357b210ea470d99f4e023b72",
+			"revisionTime": "2017-11-28T15:35:14Z"
+		},
+		{
 			"checksumSHA1": "XeZ0s/EYoIORsoatbSOJQzIDLgU=",
 			"path": "github.com/gin-contrib/cors",
 			"revision": "51f0ef8b07e973afb8b6c192bf90d5c3e575c01a",
@@ -15,34 +21,40 @@
 			"revisionTime": "2017-01-09T09:34:21Z"
 		},
 		{
-			"checksumSHA1": "cpELhz30Sco7IBwvI6FyuShnjnQ=",
+			"checksumSHA1": "jl6P2YEdsy7Zzqb8bzDX8qI09SM=",
 			"path": "github.com/gin-gonic/gin",
-			"revision": "d459835d2b077e44f7c9b453505ee29881d5d12d",
-			"revisionTime": "2017-07-02T09:28:26Z",
-			"version": "v1.2",
-			"versionExact": "v1.2"
+			"revision": "9e895470ddd40a45f28dbe4e96bfb5e893d54f9e",
+			"revisionTime": "2017-11-29T08:42:51Z"
 		},
 		{
-			"checksumSHA1": "YVt5lqmGq95m5tFdiz5pr2BF1Jo=",
+			"checksumSHA1": "3Ttl4CxOEl+NCstutCFyECv0CWs=",
 			"path": "github.com/gin-gonic/gin/binding",
-			"revision": "d459835d2b077e44f7c9b453505ee29881d5d12d",
-			"revisionTime": "2017-07-02T09:28:26Z",
-			"version": "v1.2",
-			"versionExact": "v1.2"
+			"revision": "9e895470ddd40a45f28dbe4e96bfb5e893d54f9e",
+			"revisionTime": "2017-11-29T08:42:51Z"
 		},
 		{
-			"checksumSHA1": "M3FwiqpVbXwo9t2FyI5/gKxCDKY=",
+			"checksumSHA1": "woO1qIxIeQ1bcbPSiMfAKk3r4xg=",
+			"path": "github.com/gin-gonic/gin/json",
+			"revision": "9e895470ddd40a45f28dbe4e96bfb5e893d54f9e",
+			"revisionTime": "2017-11-29T08:42:51Z"
+		},
+		{
+			"checksumSHA1": "O+2Q4Uc9Vidvc/ctORliL315ZVI=",
 			"path": "github.com/gin-gonic/gin/render",
-			"revision": "d459835d2b077e44f7c9b453505ee29881d5d12d",
-			"revisionTime": "2017-07-02T09:28:26Z",
-			"version": "v1.2",
-			"versionExact": "v1.2"
+			"revision": "9e895470ddd40a45f28dbe4e96bfb5e893d54f9e",
+			"revisionTime": "2017-11-29T08:42:51Z"
 		},
 		{
 			"checksumSHA1": "yqF125xVSkmfLpIVGrLlfE05IUk=",
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "1e59b77b52bf8e4b449a57e6f79f21226d571845",
 			"revisionTime": "2017-11-13T18:07:20Z"
+		},
+		{
+			"checksumSHA1": "QubMAmHAhgZcnsB1HqsoUP8W4vw=",
+			"path": "github.com/json-iterator/go",
+			"revision": "051434fab7e041ee2834e049ceae37492fc0412c",
+			"revisionTime": "2017-11-30T02:42:24Z"
 		},
 		{
 			"checksumSHA1": "w5RcOnfv5YDr3j2bd1YydkPiZx4=",
@@ -55,6 +67,18 @@
 			"path": "github.com/ugorji/go/codec",
 			"revision": "f0aa215a7d653544d39d0e27dfa10fa4b183f397",
 			"revisionTime": "2017-12-03T09:13:13Z"
+		},
+		{
+			"checksumSHA1": "oCH3J96RWvO8W4xjix47PModpio=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "94eea52f7b742c7cbe0b03b22f0c4c8631ece122",
+			"revisionTime": "2017-11-28T01:43:40Z"
+		},
+		{
+			"checksumSHA1": "oVPHWesOmZ02vLq2fglGvf+AMgk=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "94eea52f7b742c7cbe0b03b22f0c4c8631ece122",
+			"revisionTime": "2017-11-28T01:43:40Z"
 		},
 		{
 			"checksumSHA1": "GvrtqfUw0+pPZ1ODQB+X1DqCQmM=",
