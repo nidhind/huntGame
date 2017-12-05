@@ -3,6 +3,7 @@
 *.dll
 *.so
 *.dylib
+huntGame
 
 # Test binary, build with `go test -c`
 *.test
