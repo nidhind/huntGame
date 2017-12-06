@@ -24,6 +24,6 @@ func InitMongo() bool {
 	}
 }
 
-func GetNewSession() mgo.Session {
+func GetSession() mgo.Session {
 	return *Session.Copy()
 }

@@ -1,4 +1,4 @@
-// handlers
+// Shows simple server status
 package main
 
 import (

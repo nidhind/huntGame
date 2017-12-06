@@ -14,6 +14,8 @@ func MountRoutes(app *gin.Engine) {
 	app.RedirectTrailingSlash = false
 
 	// Enable CROS
+	app.Use(gin.Logger())
+	// Enable logger
 	app.Use(cors.Default())
 
 	// Get server status
