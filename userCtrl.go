@@ -1,3 +1,5 @@
+// Handels most of the user specific operations
+
 package main
 
 import (
@@ -16,7 +18,7 @@ func addUserHandler(c *gin.Context) {
 	emailId := c.Param("emailId")
 	if !utils.IsValidEmail(emailId) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string](interface{}){
-			"status":  "failed",
+			"status":  "error",
 			"code":    "1000",
 			"message": "Invalid emailId",
 		})
@@ -28,7 +30,7 @@ func addUserHandler(c *gin.Context) {
 	err := c.ShouldBindJSON(&user)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string](interface{}){
-			"status":  "failed",
+			"status":  "error",
 			"code":    "1002",
 			"message": "Error in parsing JSON input",
 		})
@@ -37,7 +39,7 @@ func addUserHandler(c *gin.Context) {
 
 	if !utils.IsValidPassword(user.Password) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string](interface{}){
-			"status":  "failed",
+			"status":  "error",
 			"code":    "1001",
 			"message": "Invalid or weak password",
 		})
@@ -47,7 +49,7 @@ func addUserHandler(c *gin.Context) {
 	// Check if user already exists
 	if DoesEmailExists(emailId) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string](interface{}){
-			"status":  "failed",
+			"status":  "error",
 			"code":    "1003",
 			"message": "User already exists",
 		})
@@ -57,19 +59,40 @@ func addUserHandler(c *gin.Context) {
 	// Hash the password
 	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 5)
 	user.Password = string(hash)
-
-	utils.SendJSON(c, &user, nil)
+	// Create User Object to insert
+	u := db.InsertUserQuery{
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
+		Password:    user.Password,
+		Email:       emailId,
+		AccessLevel: "normal",
+		Rank:        0,
+	}
+	err = db.InsertNewUser(&u)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string](interface{}){
+			"status":  "error",
+			"code":    "500",
+			"message": "Internal server error",
+		})
+		return
+	}
+	c.JSON(http.StatusCreated, map[string](interface{}){
+		"status":  "success",
+		"code":    "0",
+		"message": "created",
+	})
 }
 
 // Check if user exists by emailId
 func DoesEmailExists(id string) bool {
-	_, exists := GetUserByEmail(id)
-	return exists
-}
-
-// fetch user from DB by email
-func GetUserByEmail(id string) (db.User, bool) {
-	var user db.User
-
-	return user, false
+	_, err := db.GetUserByEmail(id)
+	if err != nil && err.Error() == "not found" {
+		// User doesnot exists
+		return false
+	} else if err != nil {
+		panic(err)
+	}
+	// User exists
+	return true
 }
