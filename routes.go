@@ -24,6 +24,9 @@ func MountRoutes(app *gin.Engine) {
 	// Add new user
 	app.POST("/users/:emailId", addUserHandler)
 
+	//user login
+	app.POST("/login",sessionHandler)
+
 	// Handle 404
 	app.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, map[string](string){
