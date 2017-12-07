@@ -4,28 +4,19 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/gin-contrib/cors"
 )
 
-func MountRoutes(app *gin.Engine) {
-
-	// Prevent redirects on trailing slashes
-	app.RedirectTrailingSlash = false
-
-	// Enable CROS
-	app.Use(gin.Logger())
-	// Enable logger
-	app.Use(cors.Default())
+func mountRoutes(app *gin.Engine) {
 
 	// Get server status
 	app.GET("/status", statusHandler)
+	// Get user profile
+	app.GET("/users/profile", authenticateToken, getUserProfile)
 
 	// Add new user
-	app.POST("/users/:emailId", addUserHandler)
-
+	app.POST("/users", addUserHandler)
 	//user login
-	app.POST("/login",sessionHandler)
+	app.POST("/users/access_token", sessionHandler)
 
 	// Handle 404
 	app.NoRoute(func(c *gin.Context) {
