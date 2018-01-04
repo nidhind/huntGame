@@ -8,12 +8,12 @@ const UsersColl = "users"
 
 // User schema for users collection
 type User struct {
-	FirstName   string `bson:"firstName" json:"firstName"`
-	LastName    string `bson:"lastName" json:"lastName"`
+	FirstName   string `bson:"firstname" json:"firstName"`
+	LastName    string `bson:"lastname" json:"lastName"`
 	Email       string `bson:"email" json:"email"`
 	Password    string `bson:"password" json:"password"`
 	Level       int    `bson:"level" json:"level"`
-	AccessLevel string `bson:"accessLevel" json:"accessLevel"`
+	AccessLevel string `bson:"accesslevel" json:"accessLevel"`
 	AccessToken string `bson:"accessToken" json:"accessToken"`
 }
 
