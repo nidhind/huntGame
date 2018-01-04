@@ -6,6 +6,14 @@ const PuzzleColl = "puzzles"
 
 // puzzle schema for puzzles collection
 type Puzzle struct {
+	Level        int    `json:"level",string`
+	Image        string `json:"image"`
+	Clue         string `json:"clue"`
+	SolutionHash string `json:"solutionHash"`
+}
+
+//puzzle scheme for insert queyr
+type InsertPuzzleQuery struct {
 	Level        int    `json:"level"`
 	Image        string `json:"image"`
 	Clue         string `json:"clue"`
@@ -23,4 +31,15 @@ func GetPuzzleByLevel(l int) (Puzzle, error) {
 		return Puzzle{}, err
 	}
 	return puzzle, nil
+}
+
+func InsertNewPuzzle(p *InsertPuzzleQuery) error {
+	s := GetSession()
+	defer s.Close()
+	c := s.DB(DB).C(PuzzleColl)
+	err := c.Insert(p)
+	if err != nil {
+		return err
+	}
+	return nil
 }

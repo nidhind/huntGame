@@ -15,3 +15,11 @@ type GenAccessToken struct {
 	Email    string `json:"emailId"`
 	Password string `json:"password"`
 }
+
+//For adding new puzzles
+type PuzzleReq struct {
+		Level        int    `json:"level,string"`
+		Image        string `json:"image"`
+		Clue         string `json:"clue"`
+		SolutionHash string `json:"solutionHash"`
+}

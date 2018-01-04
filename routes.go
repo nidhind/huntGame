@@ -18,6 +18,7 @@ func mountRoutes(app *gin.Engine) {
 	//user login
 	app.POST("/users/access_token", sessionHandler)
 
+	app.POST("/puzzle",addPuzzleHandler)
 	// Handle 404
 	app.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, map[string](string){
