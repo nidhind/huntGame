@@ -17,8 +17,10 @@ func mountRoutes(app *gin.Engine) {
 	app.POST("/users", addUserHandler)
 	//user login
 	app.POST("/users/access_token", sessionHandler)
-
-	app.POST("/puzzle",addPuzzleHandler)
+	//add new puzzle
+	app.POST("/puzzle", addPuzzleHandler)
+	//submit answer
+	app.POST("/answer", authenticateToken, answerHandler)
 	// Handle 404
 	app.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, map[string](string){

@@ -23,3 +23,8 @@ type PuzzleReq struct {
 		Clue         string `json:"clue"`
 		SolutionHash string `json:"solutionHash"`
 }
+
+//For submitting answers
+type AnswerReq struct {
+	Answer string `json:"answer"`
+}
