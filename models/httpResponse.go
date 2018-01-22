@@ -1,4 +1,5 @@
 package models
+import "time"
 
 type LoginRes struct {
 	Code    string `json:"code"`
@@ -24,4 +25,5 @@ type UserProfile struct {
 	LevelClue   string `json:"level_clue"`
 	AccessLevel string ` json:"access_level"`
 	AccessToken string `json:"access_token"`
+	PreviousLevelFinishTime time.Time `json:"previous_level"`
 }

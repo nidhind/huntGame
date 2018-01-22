@@ -5,9 +5,9 @@ import (
   "github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
 	"github.com/nidhind/huntGame/models"
-  "fmt"
-  "time"
 	"golang.org/x/crypto/bcrypt"
+  "fmt"
+  "strings"
 )
 
 func answerHandler(c *gin.Context) {
@@ -25,7 +25,8 @@ func answerHandler(c *gin.Context) {
   }
 
   answer := answerReq.Answer
-  //TODO format answer - remove spaces, convert to lowercase
+  answer = formatAnswer(answer)
+  fmt.Println(answer)
 
   // This is an authenticated route
   // User will be already present in context
@@ -41,27 +42,38 @@ func answerHandler(c *gin.Context) {
     return
   }
 
-  // fmt.Println(answer)
-  // fmt.Println(p.SolutionHash)
   error := bcrypt.CompareHashAndPassword([]byte(p.SolutionHash),[]byte(answer))
-  // fmt.Println(error)
   if error != nil {
-        c.JSON(http.StatusOK, &map[string](interface{}){
+      c.JSON(http.StatusOK, &map[string](interface{}){
         "code":    "1008",
         "status":  "failure",
         "message": "Incorrect answer",
       })
     return
   } else {
-    // update user profile level and leaderboard
-    fmt.Println("Level ",u.Level, "finished at ", time.Now())
-    fmt.Println(u.FirstName," has advanced to Level ",u.Level+1)
-    c.JSON(http.StatusOK, &map[string](interface{}){
-      "code":    "0",
-      "status":  "success",
-      "message": "Correct answer",
-    })
-    return
-  }
+      //update user level since correct answer
+      err = db.UpdateLevelByEmailId(u.Email,u.Level + 1)
+      if err != nil {
+        c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
+          "status":  "error",
+          "code":    "500",
+          "message": "Internal server error",
+        })
+        return
+      }
 
+      c.JSON(http.StatusOK, &map[string](interface{}){
+        "code":    "0",
+        "status":  "success",
+        "message": "Correct answer",
+      })
+      return
+  }
+}
+
+//function to remove spaces and convert to lowercase
+func formatAnswer(answer string) string {
+  answer = strings.Replace(answer," ","",-1)
+  answer = strings.ToLower(answer)
+  return answer
 }

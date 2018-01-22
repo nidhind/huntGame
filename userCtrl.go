@@ -11,6 +11,7 @@ import (
 	"github.com/nidhind/huntGame/utils"
 
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 func addUserHandler(c *gin.Context) {
@@ -66,6 +67,7 @@ func addUserHandler(c *gin.Context) {
 		Email:       emailId,
 		AccessLevel: "normal",
 		Level:       1,
+		PreviousLevelFinishTime: time.Now(),
 	}
 	err = db.InsertNewUser(&u)
 	if err != nil {
@@ -123,6 +125,7 @@ func getUserProfile(c *gin.Context) {
 			LevelClue:   p.Clue,
 			AccessLevel: u.AccessLevel,
 			AccessToken: u.AccessToken,
+			PreviousLevelFinishTime: u.PreviousLevelFinishTime,
 		},
 	}
 	c.JSON(http.StatusOK, &r)

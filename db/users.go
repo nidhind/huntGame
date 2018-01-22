@@ -2,6 +2,7 @@ package db
 
 import (
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 const UsersColl = "users"
@@ -15,6 +16,7 @@ type User struct {
 	Level       int    `bson:"level" json:"level"`
 	AccessLevel string `bson:"accesslevel" json:"accessLevel"`
 	AccessToken string `bson:"accessToken" json:"accessToken"`
+	PreviousLevelFinishTime time.Time `bson:"previousLevelFinishTime" json:"previousLevelFinishTime"`
 }
 
 // Model for new user insert query
@@ -26,6 +28,7 @@ type InsertUserQuery struct {
 	Level       int    `json:"level"`
 	AccessLevel string `json:"accessLevel"`
 	AccessToken string `json:"accessToken"`
+	PreviousLevelFinishTime time.Time `json:"previousLevelFinishTime"`
 }
 
 func GetUserByEmail(emailId string) (User, error) {
@@ -71,6 +74,19 @@ func UpdateAccessTokenByEmailId(e string, t string) error {
 	c := s.DB(DB).C(UsersColl)
 	q := bson.M{"email": e}
 	u := bson.M{"$set": bson.M{"accessToken": t}}
+	err := c.Update(&q, &u)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateLevelByEmailId(e string, l int) error {
+	s := GetSession()
+	defer s.Close()
+	c := s.DB(DB).C(UsersColl)
+	q := bson.M{"email": e}
+	u := bson.M{"$set": bson.M{"level": l,"previousLevelFinishTime": time.Now()}}
 	err := c.Update(&q, &u)
 	if err != nil {
 		return err
