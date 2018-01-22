@@ -15,6 +15,6 @@ func GenerateAccessToken() string {
 
 // Generate bcrypt hash
 func GenerateHash(answer string) string {
-	hash, _ := bcrypt.GenerateFromPassword([]byte(answer), 5)
+	hash, _ := bcrypt.GenerateFromPassword([]byte(answer), 10)
 	return string(hash)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
 	"github.com/nidhind/huntGame/models"
+	"github.com/nidhind/huntGame/utils"
 )
 
 func addPuzzleHandler(c *gin.Context) {
@@ -24,6 +25,7 @@ func addPuzzleHandler(c *gin.Context) {
   }
 
   level := puzzle.Level
+	hash := utils.GenerateHash(puzzle.SolutionHash)
   // Check if user already exists
   if DoesLevelExists(level) {
     c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
@@ -38,7 +40,7 @@ func addPuzzleHandler(c *gin.Context) {
     Level:       level,
     Image:       puzzle.Image,
     Clue:        puzzle.Clue,
-    SolutionHash: puzzle.SolutionHash,
+    SolutionHash: hash,
   }
 
   err = db.InsertNewPuzzle(&p)

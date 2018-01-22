@@ -5,9 +5,9 @@ import (
   "github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
 	"github.com/nidhind/huntGame/models"
-	"github.com/nidhind/huntGame/utils"
   "fmt"
   "time"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func answerHandler(c *gin.Context) {
@@ -23,11 +23,9 @@ func answerHandler(c *gin.Context) {
 		})
 		return
   }
+
   answer := answerReq.Answer
   //TODO format answer - remove spaces, convert to lowercase
-  answerHash := utils.GenerateHash(answer)
-  fmt.Println("answer is ",answer)
-  fmt.Println("answerHash is ",answerHash)
 
   // This is an authenticated route
   // User will be already present in context
@@ -43,26 +41,25 @@ func answerHandler(c *gin.Context) {
     return
   }
 
-  fmt.Println("Solution hash is",p.SolutionHash)
-
-  if p.SolutionHash == answerHash {
+  // fmt.Println(answer)
+  // fmt.Println(p.SolutionHash)
+  error := bcrypt.CompareHashAndPassword([]byte(p.SolutionHash),[]byte(answer))
+  // fmt.Println(error)
+  if error != nil {
+        c.JSON(http.StatusOK, &map[string](interface{}){
+        "code":    "1008",
+        "status":  "failure",
+        "message": "Incorrect answer",
+      })
+    return
+  } else {
     // update user profile level and leaderboard
     fmt.Println("Level ",u.Level, "finished at ", time.Now())
     fmt.Println(u.FirstName," has advanced to Level ",u.Level+1)
-    fmt.Println("Solution hash is",p.SolutionHash)
     c.JSON(http.StatusOK, &map[string](interface{}){
       "code":    "0",
       "status":  "success",
       "message": "Correct answer",
-    })
-    return
-  } else {
-      fmt.Println(u.FirstName," has advanced to ",u.Level+1)
-      fmt.Println("Level ",u.Level, "finished at ", time.Now())
-      c.JSON(http.StatusOK, &map[string](interface{}){
-      "code":    "1008",
-      "status":  "failure",
-      "message": "Incorrect answer",
     })
     return
   }

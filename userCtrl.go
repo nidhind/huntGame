@@ -56,7 +56,7 @@ func addUserHandler(c *gin.Context) {
 	}
 
 	// Hash the password
-	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 5)
+	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	user.Password = string(hash)
 	// Create User Object to insert
 	u := db.InsertUserQuery{
