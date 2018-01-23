@@ -10,8 +10,9 @@ import (
 	"github.com/nidhind/huntGame/models"
 	"github.com/nidhind/huntGame/utils"
 
-	"golang.org/x/crypto/bcrypt"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func addUserHandler(c *gin.Context) {
@@ -117,15 +118,15 @@ func getUserProfile(c *gin.Context) {
 		Code:   "0",
 		Status: "success",
 		Payload: &models.UserProfile{
-			FirstName:   u.FirstName,
-			LastName:    u.LastName,
-			Email:       u.Email,
-			Level:       u.Level,
-			LevelImage:  p.Image,
-			LevelClue:   p.Clue,
-			AccessLevel: u.AccessLevel,
-			AccessToken: u.AccessToken,
-			PreviousLevelFinishTime: u.PreviousLevelFinishTime,
+			FirstName:               u.FirstName,
+			LastName:                u.LastName,
+			Email:                   u.Email,
+			Level:                   u.Level,
+			LevelImage:              p.Image,
+			LevelClue:               p.Clue,
+			AccessLevel:             u.AccessLevel,
+			AccessToken:             u.AccessToken,
+			PreviousLevelFinishTime: u.PreviousLevelFinishTime.String(),
 		},
 	}
 	c.JSON(http.StatusOK, &r)

@@ -2,8 +2,8 @@ package utils
 
 import (
 	"crypto/rand"
+	"crypto/sha1"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // Generate access token
@@ -13,8 +13,8 @@ func GenerateAccessToken() string {
 	return fmt.Sprintf("%x", b)
 }
 
-// Generate bcrypt hash
-func GenerateHash(answer string) string {
-	hash, _ := bcrypt.GenerateFromPassword([]byte(answer), 10)
-	return string(hash)
+// Generate SHA1 hash
+func GenerateHash(v string) []byte {
+	hash := sha1.Sum([]byte(v))
+	return hash[:]
 }

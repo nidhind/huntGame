@@ -1,79 +1,70 @@
 package main
 
 import (
-  "net/http"
-  "github.com/gin-gonic/gin"
+	"bytes"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
 	"github.com/nidhind/huntGame/models"
-	"golang.org/x/crypto/bcrypt"
-  "fmt"
-  "strings"
+	"github.com/nidhind/huntGame/utils"
 )
 
 func answerHandler(c *gin.Context) {
 
-  // Parse request body into JSON
-  var answerReq models.AnswerReq
-  err := c.ShouldBindJSON(&answerReq)
-  if err != nil {
-    c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+	// Parse request body into JSON
+	var answerReq models.AnswerReq
+	err := c.ShouldBindJSON(&answerReq)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
 			"status":  "error",
 			"code":    "1002",
 			"message": "Error in parsing JSON input",
 		})
 		return
-  }
+	}
 
-  answer := answerReq.Answer
-  answer = formatAnswer(answer)
-  fmt.Println(answer)
+	answer := answerReq.Answer
 
-  // This is an authenticated route
-  // User will be already present in context
-  i, _ := c.Get("user")
-  u := i.(*db.User)
-  p, err := db.GetPuzzleByLevel(u.Level)
-  if err != nil {
-    c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
-      "status":  "error",
-      "code":    "500",
-      "message": "Puzzle data missing",
-    })
-    return
-  }
+	// This is an authenticated route
+	// User will be already present in context
+	i, _ := c.Get("user")
+	u := i.(*db.User)
+	p, err := db.GetPuzzleByLevel(u.Level)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
+			"status":  "error",
+			"code":    "500",
+			"message": "Puzzle data missing",
+		})
+		return
+	}
 
-  error := bcrypt.CompareHashAndPassword([]byte(p.SolutionHash),[]byte(answer))
-  if error != nil {
-      c.JSON(http.StatusOK, &map[string](interface{}){
-        "code":    "1008",
-        "status":  "failure",
-        "message": "Incorrect answer",
-      })
-    return
-  } else {
-      //update user level since correct answer
-      err = db.UpdateLevelByEmailId(u.Email,u.Level + 1)
-      if err != nil {
-        c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
-          "status":  "error",
-          "code":    "500",
-          "message": "Internal server error",
-        })
-        return
-      }
+	currentHash := utils.GenerateHash(answer)
+	if bytes.Compare(currentHash, p.SolutionHash) != 0 {
+		c.JSON(http.StatusOK, &map[string](interface{}){
+			"code":    "1008",
+			"status":  "failure",
+			"message": "Incorrect answer",
+		})
+		return
+	} else {
+		//update user level since correct answer
+		err = db.UpdateLevelByEmailId(u.Email, u.Level+1)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
+				"status":  "error",
+				"code":    "500",
+				"message": "Internal server error",
+			})
+			return
+		}
 
-      c.JSON(http.StatusOK, &map[string](interface{}){
-        "code":    "0",
-        "status":  "success",
-        "message": "Correct answer",
-      })
-      return
-  }
-}
-
-//function to remove spaces and convert to lowercase
-func formatAnswer(answer string) string {
-  answer = strings.Replace(answer," ","",-1)
-  answer = strings.ToLower(answer)
-  return answer
+		c.JSON(http.StatusOK, &map[string](interface{}){
+			"code":    "0",
+			"status":  "success",
+			"message": "Correct answer",
+		})
+		return
+	}
 }

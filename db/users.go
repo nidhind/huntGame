@@ -1,34 +1,35 @@
 package db
 
 import (
-	"gopkg.in/mgo.v2/bson"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 const UsersColl = "users"
 
 // User schema for users collection
 type User struct {
-	FirstName   string `bson:"firstname" json:"firstName"`
-	LastName    string `bson:"lastname" json:"lastName"`
-	Email       string `bson:"email" json:"email"`
-	Password    string `bson:"password" json:"password"`
-	Level       int    `bson:"level" json:"level"`
-	AccessLevel string `bson:"accesslevel" json:"accessLevel"`
-	AccessToken string `bson:"accessToken" json:"accessToken"`
-	PreviousLevelFinishTime time.Time `bson:"previousLevelFinishTime" json:"previousLevelFinishTime"`
+	FirstName               string    `bson:"firstName"`
+	LastName                string    `bson:"lastName"`
+	Email                   string    `bson:"email"`
+	Password                string    `bson:"password"`
+	Level                   int       `bson:"level"`
+	AccessLevel             string    `bson:"accessLevel"`
+	AccessToken             string    `bson:"accessToken"`
+	PreviousLevelFinishTime time.Time `bson:"previousLevelFinishTime"`
 }
 
 // Model for new user insert query
 type InsertUserQuery struct {
-	FirstName   string `json:"firstName"`
-	LastName    string `json:"lastName"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	Level       int    `json:"level"`
-	AccessLevel string `json:"accessLevel"`
-	AccessToken string `json:"accessToken"`
-	PreviousLevelFinishTime time.Time `json:"previousLevelFinishTime"`
+	FirstName               string    `bson:"firstName"`
+	LastName                string    `bson:"lastName"`
+	Email                   string    `bson:"email"`
+	Password                string    `bson:"password"`
+	Level                   int       `bson:"level"`
+	AccessLevel             string    `bson:"accessLevel"`
+	AccessToken             string    `bson:"accessToken"`
+	PreviousLevelFinishTime time.Time `bson:"previousLevelFinishTime"`
 }
 
 func GetUserByEmail(emailId string) (User, error) {
@@ -86,7 +87,7 @@ func UpdateLevelByEmailId(e string, l int) error {
 	defer s.Close()
 	c := s.DB(DB).C(UsersColl)
 	q := bson.M{"email": e}
-	u := bson.M{"$set": bson.M{"level": l,"previousLevelFinishTime": time.Now()}}
+	u := bson.M{"$set": bson.M{"level": l, "previousLevelFinishTime": time.Now()}}
 	err := c.Update(&q, &u)
 	if err != nil {
 		return err

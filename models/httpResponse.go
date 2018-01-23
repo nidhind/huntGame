@@ -1,5 +1,4 @@
 package models
-import "time"
 
 type LoginRes struct {
 	Code    string `json:"code"`
@@ -17,13 +16,13 @@ type ProfileRes struct {
 
 // User schema for users collection
 type UserProfile struct {
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Email       string `json:"email"`
-	Level       int    `json:"level"`
-	LevelImage  string `json:"level_image"`
-	LevelClue   string `json:"level_clue"`
-	AccessLevel string ` json:"access_level"`
-	AccessToken string `json:"access_token"`
-	PreviousLevelFinishTime time.Time `json:"previous_level"`
+	FirstName               string `json:"first_name"`
+	LastName                string `json:"last_name"`
+	Email                   string `json:"email"`
+	Level                   int    `json:"level"`
+	LevelImage              string `json:"level_image"`
+	LevelClue               string `json:"level_clue"`
+	AccessLevel             string ` json:"access_level"`
+	AccessToken             string `json:"access_token"`
+	PreviousLevelFinishTime string `json:"previous_level"`
 }

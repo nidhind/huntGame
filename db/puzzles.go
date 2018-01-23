@@ -6,18 +6,18 @@ const PuzzleColl = "puzzles"
 
 // puzzle schema for puzzles collection
 type Puzzle struct {
-	Level        int    `json:"level",string`
-	Image        string `json:"image"`
-	Clue         string `json:"clue"`
-	SolutionHash string `json:"solutionHash"`
+	Level        int    `bson:"level",string`
+	Image        string `bson:"image"`
+	Clue         string `bson:"clue"`
+	SolutionHash []byte `bson:"solutionHash"`
 }
 
 //puzzle scheme for insert queyr
 type InsertPuzzleQuery struct {
-	Level        int    `json:"level"`
-	Image        string `json:"image"`
-	Clue         string `json:"clue"`
-	SolutionHash string `json:"solutionHash"`
+	Level        int    `bson:"level"`
+	Image        string `bson:"image"`
+	Clue         string `bson:"clue"`
+	SolutionHash []byte `bson:"solutionHash"`
 }
 
 func GetPuzzleByLevel(l int) (Puzzle, error) {
