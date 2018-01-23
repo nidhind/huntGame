@@ -58,6 +58,19 @@ func GetUserByAccessToken(t string) (User, error) {
 	return user, nil
 }
 
+func GetUserLeaderBoard(l int) (*[]User, error) {
+	s := GetSession()
+	defer s.Close()
+	c := s.DB(DB).C(UsersColl)
+
+	var users []User
+	err := c.Find(bson.M{}).Sort("-level", "previousLevelFinishTime").Limit(l).All(&users)
+	if err != nil {
+		return &[]User{}, err
+	}
+	return &users, nil
+}
+
 func InsertNewUser(u *InsertUserQuery) error {
 	s := GetSession()
 	defer s.Close()

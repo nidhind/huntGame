@@ -131,3 +131,35 @@ func getUserProfile(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, &r)
 }
+
+// Fetch and serve user leader board
+func getUserLeadBoardHandler(c *gin.Context) {
+	l := 10
+	ul, err := db.GetUserLeaderBoard(l)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
+			"status":  "error",
+			"code":    "500",
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	payload := &[]models.UserLeaderBoard{}
+	for _, u := range *ul {
+		*payload = append(*payload, models.UserLeaderBoard{
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Email:     u.Email,
+			Level:     u.Level,
+			PreviousLevelFinishTime: u.PreviousLevelFinishTime.String(),
+		})
+	}
+
+	r := models.ProfileRes{
+		Code:    "0",
+		Status:  "success",
+		Payload: &payload,
+	}
+	c.JSON(http.StatusOK, &r)
+}

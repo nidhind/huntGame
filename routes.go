@@ -12,6 +12,8 @@ func mountRoutes(app *gin.Engine) {
 	app.GET("/status", statusHandler)
 	// Get user profile
 	app.GET("/users/profile", authenticateToken, getUserProfile)
+	// Get user leader board
+	app.GET("/users/leader-board", authenticateToken, getUserLeadBoardHandler)
 
 	// Add new user
 	app.POST("/users", addUserHandler)

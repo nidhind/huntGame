@@ -26,3 +26,12 @@ type UserProfile struct {
 	AccessToken             string `json:"access_token"`
 	PreviousLevelFinishTime string `json:"previous_level"`
 }
+
+// Leader board response model
+type UserLeaderBoard struct {
+	FirstName               string `json:"first_name"`
+	LastName                string `json:"last_name"`
+	Email                   string `json:"email"`
+	Level                   int    `json:"level"`
+	PreviousLevelFinishTime string `json:"previous_level"`
+}
