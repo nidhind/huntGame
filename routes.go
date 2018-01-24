@@ -23,6 +23,10 @@ func mountRoutes(app *gin.Engine) {
 	app.POST("/puzzle", addPuzzleHandler)
 	//submit answer
 	app.POST("/answer", authenticateToken, answerHandler)
+
+	//serve static assets
+	app.Static("/assets", "./assets") 
+
 	// Handle 404
 	app.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, map[string](string){
