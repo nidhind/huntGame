@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
@@ -11,7 +12,8 @@ import (
 )
 
 func answerHandler(c *gin.Context) {
-
+	// Capture user answered time as early as possible
+	at := time.Now()
 	// Parse request body into JSON
 	var answerReq models.AnswerReq
 	err := c.ShouldBindJSON(&answerReq)
@@ -40,6 +42,9 @@ func answerHandler(c *gin.Context) {
 		return
 	}
 
+	// Audit the answer async
+	go utils.AuditAnswer(u.Email, answer, u.Level, at)
+
 	currentHash := utils.GenerateHash(answer)
 	if bytes.Compare(currentHash, p.SolutionHash) != 0 {
 		c.JSON(http.StatusOK, &map[string](interface{}){
@@ -50,7 +55,7 @@ func answerHandler(c *gin.Context) {
 		return
 	} else {
 		//update user level since correct answer
-		err = db.UpdateLevelByEmailId(u.Email, u.Level+1)
+		err = db.UpdateLevelByEmailId(u.Email, u.Level+1, at)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
 				"status":  "error",

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/nidhind/huntGame/db"
+	"github.com/nidhind/huntGame/utils"
 )
 
 var startUpTime time.Time = time.Now()
@@ -15,6 +16,9 @@ func main() {
 
 	// Initialize database
 	db.InitMongo()
+
+	// Initialize audit logger
+	utils.InitAuditLog()
 
 	api := gin.New()
 	// Prevent redirects on trailing slashes

@@ -1,8 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
-  "fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
 	"github.com/nidhind/huntGame/models"
@@ -10,41 +11,41 @@ import (
 )
 
 func addPuzzleHandler(c *gin.Context) {
-  // Parse request body into JSON
-  var puzzle models.PuzzleReq
-  err := c.ShouldBindJSON(&puzzle)
+	// Parse request body into JSON
+	var puzzle models.PuzzleReq
+	err := c.ShouldBindJSON(&puzzle)
 
-  if err != nil {
-    fmt.Println(err)
-    c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
-      "status":  "error",
-      "code":    "1002",
-      "message": "Error in parsing JSON input",
-    })
-    return
-  }
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1002",
+			"message": "Error in parsing JSON input",
+		})
+		return
+	}
 
-  level := puzzle.Level
+	level := puzzle.Level
 	hash := utils.GenerateHash(puzzle.SolutionHash)
-  // Check if user already exists
-  if DoesLevelExists(level) {
-    c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
-      "status":  "error",
-      "code":    "1006",
-      "message": "level already exists",
-    })
-    return
-  }
+	// Check if user already exists
+	if DoesLevelExists(level) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1006",
+			"message": "level already exists",
+		})
+		return
+	}
 
-  p := db.InsertPuzzleQuery{
-    Level:       level,
-    Image:       puzzle.Image,
-    Clue:        puzzle.Clue,
-    SolutionHash: hash,
-  }
+	p := db.InsertPuzzleQuery{
+		Level:        level,
+		Image:        puzzle.Image,
+		Clue:         puzzle.Clue,
+		SolutionHash: hash,
+	}
 
-  err = db.InsertNewPuzzle(&p)
-  if err != nil {
+	err = db.InsertNewPuzzle(&p)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
 			"status":  "error",
 			"code":    "500",
@@ -62,13 +63,13 @@ func addPuzzleHandler(c *gin.Context) {
 
 //check if level exists
 func DoesLevelExists(level int) bool {
-  _, err := db.GetPuzzleByLevel(level)
-  if err != nil && err.Error() == "not found" {
-    // User doesnot exists
-    return false
-  } else if err != nil {
-    panic(err)
-  }
-  // User exists
-  return true
+	_, err := db.GetPuzzleByLevel(level)
+	if err != nil && err.Error() == "not found" {
+		// User doesnot exists
+		return false
+	} else if err != nil {
+		panic(err)
+	}
+	// User exists
+	return true
 }

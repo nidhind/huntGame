@@ -95,12 +95,12 @@ func UpdateAccessTokenByEmailId(e string, t string) error {
 	return nil
 }
 
-func UpdateLevelByEmailId(e string, l int) error {
+func UpdateLevelByEmailId(e string, l int, t time.Time) error {
 	s := GetSession()
 	defer s.Close()
 	c := s.DB(DB).C(UsersColl)
 	q := bson.M{"email": e}
-	u := bson.M{"$set": bson.M{"level": l, "previousLevelFinishTime": time.Now()}}
+	u := bson.M{"$set": bson.M{"level": l, "previousLevelFinishTime": t}}
 	err := c.Update(&q, &u)
 	if err != nil {
 		return err
