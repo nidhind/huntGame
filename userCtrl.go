@@ -3,7 +3,12 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
+	"log"
 	"net/http"
+	"net/url"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
@@ -125,7 +130,6 @@ func getUserProfile(c *gin.Context) {
 			LevelImage:              p.Image,
 			LevelClue:               p.Clue,
 			AccessLevel:             u.AccessLevel,
-			AccessToken:             u.AccessToken,
 			PreviousLevelFinishTime: u.PreviousLevelFinishTime.String(),
 		},
 	}
@@ -162,4 +166,159 @@ func getUserLeadBoardHandler(c *gin.Context) {
 		Payload: &payload,
 	}
 	c.JSON(http.StatusOK, &r)
+}
+
+// Send password reset mail
+func forgotPasswordHandler(c *gin.Context) {
+	// Parse request body into JSON
+	var user models.ResetPswdEmailReq
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1002",
+			"message": "Error in parsing JSON input",
+		})
+		return
+	}
+	email := user.Email
+	if !utils.IsValidEmail(email) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1000",
+			"message": "Invalid emailId",
+		})
+		return
+	}
+
+	// Check if user already exists
+	if !DoesEmailExists(email) {
+		// For security do not disclose that emailid does not exist
+		time.Sleep(100 * time.Millisecond)
+		c.AbortWithStatusJSON(http.StatusAccepted, &map[string](interface{}){
+			"status":  "success",
+			"code":    "0",
+			"message": "Reset link has been emailed",
+		})
+		return
+	}
+	claims := map[string]interface{}{
+		"email": email,
+		"iat":   time.Now().Unix(),
+		// Expires in 24 hrs
+		"exp": time.Now().Add(24 * time.Hour).Unix(),
+		"sub": "RESET_PASSWORD_TOKEN",
+	}
+	rt := utils.GenerateJWTToken(claims)
+	rl := GenerateResetPswdLink(&rt)
+
+	// Send email with link
+	pt, err := getResetPswdEmailTemplate()
+	var msg bytes.Buffer
+	td := struct {
+		Email     string
+		ResetLink string
+	}{
+		Email:     email,
+		ResetLink: rl.String(),
+	}
+	err = pt.Execute(&msg, td)
+	m := MailObj{
+		To:          email,
+		Subject:     `Reset your password`,
+		MessageHTML: msg.String(),
+	}
+	err = Send(&m)
+	if err != nil {
+		log.Println("Error in sending mail: ", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
+			"status":  "error",
+			"code":    "500",
+			"message": "Internal server error",
+		})
+		return
+	}
+	c.JSON(http.StatusAccepted, &map[string](interface{}){
+		"status":  "success",
+		"code":    "0",
+		"message": "Reset link has been emailed",
+	})
+}
+
+func GenerateResetPswdLink(rt *string) url.URL {
+	link, err := url.Parse(os.Getenv("RESET_PASSWORD_URL"))
+	if err != nil {
+		fmt.Println(err)
+	}
+	q := link.Query()
+	q.Add("reset_token", *rt)
+	link.RawQuery = q.Encode()
+	return *link
+}
+
+// Validate reset token and update password
+func ForgotPasswordRedirectHandler(c *gin.Context) {
+	rt := c.Query("reset_token")
+	_, err := utils.ParseJWTToken(rt)
+	if err != "" {
+		c.Header("Content-Type", "text/html")
+		c.String(http.StatusForbidden,
+			`<h3>The link is either invalid or expired...</h3>`)
+		return
+	}
+	c.Redirect(http.StatusTemporaryRedirect, os.Getenv("RESET_PASSWORD_UPDATE_REDIRECT"))
+}
+
+func ForgotPasswordUpdateHandler(c *gin.Context) {
+	jwt := c.Query("reset_token")
+	claims, isValid := utils.ParseJWTToken(jwt)
+	if isValid != "" {
+		c.JSON(http.StatusForbidden, &map[string]interface{}{
+			"status":  "error",
+			"code":    "2003",
+			"message": "Invalid or expired reset token",
+		})
+		return
+	}
+
+	// Parse request body into JSON
+	var rp models.ResetPswdUpdateReq
+	err := c.ShouldBindJSON(&rp)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1002",
+			"message": "Error in parsing JSON input",
+		})
+		return
+	}
+
+	// validate new password
+	if !utils.IsValidPassword(rp.NewPassword) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1001",
+			"message": "Invalid or weak password",
+		})
+		return
+	}
+	// TODO Handle unexpected errors during type casting
+	e := claims["email"].(string)
+	// Hash the password
+	hash, _ := bcrypt.GenerateFromPassword([]byte(rp.NewPassword), 10)
+	err = db.UpdatePasswordByEmailId(e, string(hash))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
+			"status":  "error",
+			"code":    "500",
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, &map[string](interface{}){
+		"status":  "success",
+		"code":    "0",
+		"message": "New password applied",
+	})
 }

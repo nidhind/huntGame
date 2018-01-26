@@ -23,7 +23,6 @@ type UserProfile struct {
 	LevelImage              string `json:"level_image"`
 	LevelClue               string `json:"level_clue"`
 	AccessLevel             string ` json:"access_level"`
-	AccessToken             string `json:"access_token"`
 	PreviousLevelFinishTime string `json:"previous_level"`
 }
 

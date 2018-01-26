@@ -14,6 +14,8 @@ func mountRoutes(app *gin.Engine) {
 	app.GET("/users/profile", authenticateToken, getUserProfile)
 	// Get user leader board
 	app.GET("/users/leader-board", authenticateToken, getUserLeadBoardHandler)
+	// Password reset redirect request handler
+	app.GET("/users/password/reset/new", ForgotPasswordRedirectHandler)
 
 	// Add new user
 	app.POST("/users", addUserHandler)
@@ -24,8 +26,13 @@ func mountRoutes(app *gin.Engine) {
 	//submit answer
 	app.POST("/answer", authenticateToken, answerHandler)
 
+	// Forgot password send mail handler
+	app.PATCH("/users/password/reset", forgotPasswordHandler)
+	// Password reset update handler
+	app.PUT("/users/password/reset/new", ForgotPasswordUpdateHandler)
+
 	//serve static assets
-	app.Static("/assets", "./assets") 
+	app.Static("/assets", "./assets")
 
 	// Handle 404
 	app.NoRoute(func(c *gin.Context) {

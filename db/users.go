@@ -107,3 +107,16 @@ func UpdateLevelByEmailId(e string, l int, t time.Time) error {
 	}
 	return nil
 }
+
+func UpdatePasswordByEmailId(e, p string) error {
+	s := GetSession()
+	defer s.Close()
+	c := s.DB(DB).C(UsersColl)
+	q := bson.M{"email": e}
+	u := bson.M{"$set": bson.M{"password": p}}
+	err := c.Update(&q, &u)
+	if err != nil {
+		return err
+	}
+	return nil
+}
