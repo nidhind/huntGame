@@ -28,3 +28,9 @@ type PuzzleReq struct {
 type AnswerReq struct {
 	Answer string `json:"answer"`
 }
+
+//For updating user role
+type RoleUpdateReq struct {
+	Email string `json:"emailId"`
+	AccessLevel string `json:"accessLevel"`
+}
