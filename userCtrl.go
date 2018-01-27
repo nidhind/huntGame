@@ -177,6 +177,7 @@ func roleHandler(c *gin.Context) {
 		return
 	}
 
+	//Authenticated route - user already in context
 	i, _ := c.Get("user")
 	u := i.(*db.User)
 

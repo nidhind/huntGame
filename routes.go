@@ -20,7 +20,7 @@ func mountRoutes(app *gin.Engine) {
 	//user login
 	app.POST("/users/access_token", sessionHandler)
 	//add new puzzle
-	app.POST("/puzzle", addPuzzleHandler)
+	app.POST("/puzzle", authenticateToken, addPuzzleHandler)
 	//submit answer
 	app.POST("/answer", authenticateToken, answerHandler)
 	//user role update
