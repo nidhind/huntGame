@@ -113,7 +113,8 @@ func UpdatePasswordByEmailId(e, p string) error {
 	defer s.Close()
 	c := s.DB(DB).C(UsersColl)
 	q := bson.M{"email": e}
-	u := bson.M{"$set": bson.M{"password": p}}
+	// Update password as well as log out current session
+	u := bson.M{"$set": bson.M{"password": p, "accessToken": ""}}
 	err := c.Update(&q, &u)
 	if err != nil {
 		return err

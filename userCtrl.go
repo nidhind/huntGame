@@ -205,8 +205,8 @@ func forgotPasswordHandler(c *gin.Context) {
 	claims := map[string]interface{}{
 		"email": email,
 		"iat":   time.Now().Unix(),
-		// Expires in 24 hrs
-		"exp": time.Now().Add(24 * time.Hour).Unix(),
+		// Expires in 15 Minutes
+		"exp": time.Now().Add(15 * time.Minute).Unix(),
 		"sub": "RESET_PASSWORD_TOKEN",
 	}
 	rt := utils.GenerateJWTToken(claims)
