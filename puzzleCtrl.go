@@ -25,6 +25,18 @@ func addPuzzleHandler(c *gin.Context) {
 		return
 	}
 
+	//Authenticated route - user already in context
+	i, _ := c.Get("user")
+	u := i.(*db.User)
+	if u.AccessLevel != "admin" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1009",
+			"message": "action requires higher access level",
+		})
+		return
+	}
+
 	level := puzzle.Level
 	hash := utils.GenerateHash(puzzle.SolutionHash)
 	// Check if user already exists
