@@ -25,6 +25,8 @@ func mountRoutes(app *gin.Engine) {
 	app.POST("/puzzle", addPuzzleHandler)
 	//submit answer
 	app.POST("/answer", authenticateToken, answerHandler)
+	//user role update
+	app.POST("/users/role", authenticateToken, roleHandler)
 
 	// Forgot password send mail handler
 	app.PATCH("/users/password/reset", forgotPasswordHandler)
@@ -32,7 +34,7 @@ func mountRoutes(app *gin.Engine) {
 	app.PUT("/users/password/reset/new", ForgotPasswordUpdateHandler)
 
 	//serve static assets
-	app.Static("/assets", "./assets")
+	// app.Static("/assets", "./assets")
 
 	// Handle 404
 	app.NoRoute(func(c *gin.Context) {

@@ -16,7 +16,6 @@ import (
 	"github.com/nidhind/huntGame/utils"
 
 	"time"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -330,5 +329,56 @@ func ForgotPasswordUpdateHandler(c *gin.Context) {
 		"status":  "success",
 		"code":    "0",
 		"message": "New password applied",
+	})
+}
+
+//udpate user roles
+func roleHandler(c *gin.Context) {
+
+	var role models.RoleUpdateReq
+	err := c.ShouldBindJSON(&role)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1002",
+			"message": "Error in parsing JSON input",
+		})
+		return
+	}
+
+	//Authenticated route - user already in context
+	i, _ := c.Get("user")
+	u := i.(*db.User)
+
+	//validate user role
+	if u.AccessLevel == "admin" {
+		if DoesEmailExists(role.Email){
+			err = db.UpdateRoleByEmailId(role.Email,role.AccessLevel)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
+					"status":  "error",
+					"code":    "500",
+					"message": "Internal server error",
+				})
+				return
+			}
+			c.JSON(http.StatusCreated, &map[string](interface{}){
+				"status":  "success",
+				"code":    "0",
+				"message": "user role updated",
+			})
+			return
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, &map[string](interface{}){
+			"status":  "error",
+			"code":    "1010",
+			"message": "User does not exist",
+		})
+		return
+	}
+	c.AbortWithStatusJSON(http.StatusUnauthorized, &map[string](interface{}){
+		"status":  "error",
+		"code":    "1009",
+		"message": "action requires higher access level",
 	})
 }

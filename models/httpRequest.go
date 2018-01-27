@@ -38,3 +38,10 @@ type ResetPswdEmailReq struct {
 type ResetPswdUpdateReq struct {
 	NewPassword string `json:"new_password"`
 }
+
+
+//For updating user role
+type RoleUpdateReq struct {
+	Email string `json:"emailId"`
+	AccessLevel string `json:"accessLevel"`
+}
