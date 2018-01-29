@@ -2,6 +2,8 @@ package main
 
 import (
 	"time"
+	"os"
+	"io"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -21,6 +23,13 @@ func main() {
 	utils.InitAuditLog()
 
 	api := gin.New()
+
+	// Disable Console Color when writing the logs to file.
+	gin.DisableConsoleColor()
+	// Logging to a file.
+	f, _ := os.OpenFile("gin.log",os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	gin.DefaultWriter = io.MultiWriter(f,os.Stdout)
+
 	// Prevent redirects on trailing slashes
 	api.RedirectTrailingSlash = false
 	// Enable Logger
