@@ -114,7 +114,7 @@ func getUserProfile(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
 			"status":  "error",
-			"code":    "500",
+			"code":    "5000",
 			"message": "Puzzle data missing",
 		})
 		return
