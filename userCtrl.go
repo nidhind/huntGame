@@ -266,7 +266,17 @@ func ForgotPasswordRedirectHandler(c *gin.Context) {
 			`<h3>The link is either invalid or expired...</h3>`)
 		return
 	}
-	c.Redirect(http.StatusTemporaryRedirect, os.Getenv("RESET_PASSWORD_UPDATE_REDIRECT"))
+	rurl, perr := url.Parse(os.Getenv("RESET_PASSWORD_UPDATE_REDIRECT"))
+	if perr != nil {
+		c.Header("Content-Type", "text/html")
+		c.String(http.StatusForbidden,
+			`<h3>Unexpected error occured. Please contact admins...</h3>`)
+		return
+	}
+	q := rurl.Query()
+	q.Set("reset_token", rt)
+	rurl.RawQuery = q.Encode()
+	c.Redirect(http.StatusTemporaryRedirect, rurl.String())
 }
 
 func ForgotPasswordUpdateHandler(c *gin.Context) {
