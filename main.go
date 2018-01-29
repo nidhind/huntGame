@@ -27,7 +27,8 @@ func main() {
 	// Disable Console Color when writing the logs to file.
 	gin.DisableConsoleColor()
 	// Logging to a file.
-	f, _ := os.OpenFile("gin.log",os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	ginLogFilePath := utils.GetGinLogFilePath()
+	f, _ := os.OpenFile(ginLogFilePath,os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	gin.DefaultWriter = io.MultiWriter(f,os.Stdout)
 
 	// Prevent redirects on trailing slashes
