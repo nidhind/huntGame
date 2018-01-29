@@ -29,6 +29,7 @@ func main() {
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
 	corsConfig.AddAllowHeaders("Authorization")
+	corsConfig.AddAllowMethods("PATCH")
 	api.Use(cors.New(corsConfig))
 
 	// Mount API routes
