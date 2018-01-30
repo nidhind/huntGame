@@ -137,7 +137,7 @@ func getUserProfile(c *gin.Context) {
 
 // Fetch and serve user leader board
 func getUserLeadBoardHandler(c *gin.Context) {
-	l := 10
+	l := 20
 	ul, err := db.GetUserLeaderBoard(l)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
