@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nidhind/huntGame/db"
@@ -137,8 +138,12 @@ func getUserProfile(c *gin.Context) {
 
 // Fetch and serve user leader board
 func getUserLeadBoardHandler(c *gin.Context) {
-	l := 20
-	ul, err := db.GetUserLeaderBoard(l)
+	l := os.Getenv("LEADER_BOARD_LIMIT")
+	if l == "" {
+		l = "20"
+	}
+	limit, _ := strconv.Atoi(l)
+	ul, err := db.GetUserLeaderBoard(limit)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &map[string](interface{}){
 			"status":  "error",
