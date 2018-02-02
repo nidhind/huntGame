@@ -16,6 +16,8 @@ func mountRoutes(app *gin.Engine) {
 	app.GET("/users/leader-board", authenticateToken, getUserLeadBoardHandler)
 	// Password reset redirect request handler
 	app.GET("/users/password/reset/new", ForgotPasswordRedirectHandler)
+	// Password reset redirect request handler
+	app.GET("/stat/submissions", statisticsHandler)
 
 	// Add new user
 	app.POST("/users", addUserHandler)
