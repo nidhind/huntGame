@@ -14,7 +14,8 @@ import (
 func answerHandler(c *gin.Context) {
 	// Capture user answered time as early as possible
 	at := time.Now()
-	go updateStatistics()
+	// go 	updateStatistics()
+	go db.UpdateCount("answer")
 	// Parse request body into JSON
 	var answerReq models.AnswerReq
 	err := c.ShouldBindJSON(&answerReq)
@@ -75,6 +76,6 @@ func answerHandler(c *gin.Context) {
 	}
 }
 
-func updateStatistics() {
-	_ = db.UpdateCount("answer")
-}
+// func updateStatistics() {
+// 	_ = db.UpdateCount("answer")
+// }
